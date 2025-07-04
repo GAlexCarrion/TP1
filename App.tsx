@@ -1,20 +1,16 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+// App.tsx
+import 'react-native-gesture-handler'; // ¡Importante para Gesture Handler!
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import GameNavigator from './navigations/navigation'; // Importa tu Drawer Navigator del juego
 
-export default function App() {
+const App = () => {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      {/* Asegúrate de que no haya ningún texto aquí fuera de GameNavigator */}
+      <GameNavigator />
+    </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
