@@ -3,7 +3,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import WelcomeGameScreen from '../screens/JUEGO/Bienvenido';
 import GameScreen from '../screens/JUEGO/juego';
-import ScoreScreen from '../screens/JUEGO/juego';
+import ScoreScreen from '../screens/JUEGO/score';
 
 import GuardarScreen from '../screens/data/GuardarScreen';
 import LeerScreen from '../screens/data/LeerScreen';
