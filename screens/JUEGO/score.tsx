@@ -1,6 +1,4 @@
 
-
-// screens/juego/ScoreScreen.tsx
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
@@ -9,7 +7,7 @@ const ScoreScreen = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Mejores Puntuaciones</Text>
       <Text style={styles.message}>Aquí se mostrarán tus puntuaciones más altas.</Text>
-      {/* Futura implementación para mostrar puntuaciones de Firebase */}
+      {/* Futura implementacion para mostrar puntuaciones de Firebase */}
     </View>
   );
 };
@@ -19,7 +17,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FFDAB9', // Un durazno claro
+    backgroundColor: '#FFDAB9', 
   },
   title: {
     fontSize: 28,

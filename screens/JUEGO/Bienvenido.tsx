@@ -15,16 +15,14 @@ const WelcomeGameScreen = () => {
   const navigation = useNavigation<WelcomeGameScreenNavigationProp>();
 
   const handleStartGame = () => {
-    // Navega a la pantalla principal del juego
     navigation.navigate('Game');
   };
 
   return (
     <View style={styles.container}>
-      {/* Sección de la Imagen/Ilustración */}
       <View style={styles.imageContainer}>
         <Image
-          source={{ uri: 'https://placehold.co/600x400/2E8B57/FFFFFF?text=Snake+Game+Welcome' }} // Placeholder de imagen de ejemplo
+          source={{ uri: 'https://placehold.co/600x400/2E8B57/FFFFFF?text=Snake+Game+Welcome' }} 
           style={styles.gameImage}
           resizeMode="contain"
           onError={(e) => console.log('Error al cargar la imagen:', e.nativeEvent.error)}
