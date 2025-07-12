@@ -2,8 +2,8 @@ import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import WelcomeGameScreen from '../screens/JUEGO/Bienvenido';
-import GameScreen from '../screens/JUEGO/juego';
-import ScoreScreen from '../screens/JUEGO/juego';
+import GameScreen from '../screens/JUEGO/Juego';
+import ScoreScreen from '../screens/JUEGO/Puntuacion';
 
 import GuardarScreen from '../screens/data/GuardarScreen';
 import LeerScreen from '../screens/data/LeerScreen';

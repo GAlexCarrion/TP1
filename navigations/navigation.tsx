@@ -5,8 +5,8 @@ import { View, Text } from 'react-native'; // Importa View y Text por si acaso
 
 // Importa tus pantallas
 import WelcomeGameScreen from '../screens/JUEGO/Bienvenido';
-import GameScreen from '../screens/JUEGO/juego';
-import ScoreScreen from '../screens/JUEGO/score';
+import GameScreen from '../screens/JUEGO/Juego';
+import ScoreScreen from '../screens/JUEGO/Puntuacion';
 
 const Drawer = createDrawerNavigator();
 
