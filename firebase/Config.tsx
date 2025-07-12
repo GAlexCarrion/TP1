@@ -1,20 +1,24 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getDatabase } from "firebase/database";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+// firebase/config.tsx
+// Este archivo configura la conexión a Firebase y sus servicios
 
-// Your web app's Firebase configuration
+import { initializeApp } from 'firebase/app';
+import { getDatabase } from 'firebase/database';
+import { getAuth } from 'firebase/auth';
+
+
 const firebaseConfig = {
-  apiKey: "AIzaSyBOGPiH7gS1H5clL2kfDTwfCxT9OYmwtuc",
-  authDomain: "actividadautonomaejercicio1.firebaseapp.com",
-  databaseURL: "https://actividadautonomaejercicio1-default-rtdb.firebaseio.com",
-  projectId: "actividadautonomaejercicio1",
-  storageBucket: "actividadautonomaejercicio1.firebasestorage.app",
-  messagingSenderId: "768278468495",
-  appId: "1:768278468495:web:ee37922f302e87a9f51dfa"
+  apiKey: "AIzaSyD9e5Dj31PYvj-mQWCkfxJyJk6k2hyStsI",
+  authDomain: "proyectomoviles2-c5837.firebaseapp.com",
+  projectId: "proyectomoviles2-c5837",
+  storageBucket: "proyectomoviles2-c5837.firebasestorage.app",
+  messagingSenderId: "912787231356",
+  appId: "1:912787231356:web:29d5cd2ee5621bf6316ff9"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
 export const db = getDatabase(app);
+
+export const auth = getAuth(app);
+
+console.log("Firebase Realtime Database y Auth inicializados.");
