@@ -1,5 +1,5 @@
 {
-  "name": "actividadautonomaejercicio1",
+  "name": "t1",
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
@@ -9,7 +9,9 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-native-masked-view/masked-view": "0.3.2",
+    "@react-navigation/drawer": "^7.5.2",
     "@react-navigation/native": "^7.1.14",
     "@react-navigation/stack": "^7.4.2",
     "expo": "~53.0.17",
@@ -19,7 +21,7 @@
     "react-native": "0.79.5",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-reanimated": "~3.17.4",
-    "react-native-safe-area-context": "5.4.0",
+    "react-native-safe-area-context": "^5.4.0",
     "react-native-screens": "~4.11.1"
   },
   "devDependencies": {
