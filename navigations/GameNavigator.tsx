@@ -2,13 +2,14 @@ import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import WelcomeGameScreen from '../screens/JUEGO/Bienvenido';
-import GameScreen from '../screens/JUEGO/Juego';
-import ScoreScreen from '../screens/JUEGO/Puntuacion';
+
 
 import GuardarScreen from '../screens/data/GuardarScreen';
 import LeerScreen from '../screens/data/LeerScreen';
 import EditarScreen from '../screens/data/EditarScreen';
 import EliminarScreen from '../screens/data/EliminarScreen';
+import juego from '../screens/JUEGO/Juego';
+import Puntuacion from '../screens/JUEGO/Puntuacion';
 
 const Drawer = createDrawerNavigator();
 
@@ -25,7 +26,7 @@ const GameNavigator = () => {
       />
       <Drawer.Screen
         name="Game"
-        component={GameScreen}
+        component={juego}
         options={{
           drawerLabel: 'Jugar Serpiente',
           headerTitle: 'El Juego de la Serpiente',
@@ -33,7 +34,7 @@ const GameNavigator = () => {
       />
       <Drawer.Screen
         name="Score"
-        component={ScoreScreen}
+        component={Puntuacion}
         options={{
           drawerLabel: 'Puntuaciones',
           headerTitle: 'Mejores Puntuaciones',
