@@ -9,10 +9,10 @@ type GameDrawerParamList = {
   Score: undefined;
 };
 
-type WelcomeGameScreenNavigationProp = DrawerNavigationProp<GameDrawerParamList, 'WelcomeGame'>;
+type BienvenidoNavigationProp = DrawerNavigationProp<GameDrawerParamList, 'WelcomeGame'>;
 
-const WelcomeGameScreen = () => { 
-  const navigation = useNavigation<WelcomeGameScreenNavigationProp>();
+const Bienvenido = () => { 
+  const navigation = useNavigation<BienvenidoNavigationProp>();
 
   const handleStartGame = () => {
     navigation.navigate('Game');
@@ -106,4 +106,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WelcomeGameScreen;
+export default Bienvenido;
