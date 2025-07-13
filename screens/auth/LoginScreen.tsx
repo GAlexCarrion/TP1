@@ -36,7 +36,6 @@ const LoginScreen = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       Alert.alert('Éxito', '¡Inicio de sesión exitoso!');
-      appNavigation.replace('GameModule'); 
     } catch (error: any) {
       let errorMessage = 'Error al iniciar sesión. Por favor, inténtalo de nuevo.';
       if (error.code === 'auth/invalid-email') {
