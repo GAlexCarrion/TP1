@@ -5,7 +5,7 @@ import { View, Text } from 'react-native'; // Importa View y Text por si acaso
 
 // Importa tus pantallas
 import WelcomeGameScreen from '../screens/JUEGO/Bienvenido';
-import GameScreen from '../screens/JUEGO/Juego';
+import juego from '../screens/JUEGO/juego';
 import ScoreScreen from '../screens/JUEGO/Puntuacion';
 
 const Drawer = createDrawerNavigator();
@@ -23,7 +23,7 @@ const GameNavigator = () => {
       />
       <Drawer.Screen
         name="Game"
-        component={GameScreen}
+        component={juego}
         options={{
           drawerLabel: 'Jugar Serpiente',
           headerTitle: 'El Juego de la Serpiente',
