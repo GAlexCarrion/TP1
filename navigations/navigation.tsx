@@ -1,9 +1,5 @@
-// navigations/GameNavigator.tsx
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { View, Text } from 'react-native'; // Importa View y Text por si acaso
-
-// Importa tus pantallas
 import WelcomeGameScreen from '../screens/JUEGO/Bienvenido';
 import juego from '../screens/JUEGO/juego';
 import ScoreScreen from '../screens/JUEGO/Puntuacion';
@@ -18,7 +14,7 @@ const GameNavigator = () => {
         component={WelcomeGameScreen}
         options={{
           drawerLabel: 'Inicio del Juego',
-          headerShown: false, // Opcional: Ocultar el encabezado en la pantalla de bienvenida
+          headerShown: false, 
         }}
       />
       <Drawer.Screen
