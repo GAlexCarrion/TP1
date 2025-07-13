@@ -8,7 +8,7 @@ import GuardarScreen from '../screens/data/GuardarScreen';
 import LeerScreen from '../screens/data/LeerScreen';
 import EditarScreen from '../screens/data/EditarScreen';
 import EliminarScreen from '../screens/data/EliminarScreen';
-import juego from '../screens/JUEGO/Juego';
+import juego from '../screens/JUEGO/juego';
 import Puntuacion from '../screens/JUEGO/Puntuacion';
 
 const Drawer = createDrawerNavigator();
