@@ -8,12 +8,21 @@ import { GameLoop } from '../engine/systems';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
+interface GameEngineRef extends GameEngine {
+  swap: (entities: any) => void;
+    dispatch: (event: any) => void;
+
+  }
+
+
 export default function JuegoScreen() {
   const [isRunning, setIsRunning] = useState(true);
   const [score, setScore] = useState(0);
-  const engineRef = useRef(null);
 
-  const onEvent = (e) => {
+    const engineRef  = useRef<GameEngineRef>(null);
+  
+
+  const onEvent = (e: { type: string; }) => {
     if (e.type === 'eat') {
       setScore(currentScore => currentScore + 10);
     } else if (e.type === 'game-over') {
@@ -73,18 +82,18 @@ export default function JuegoScreen() {
       )}
 
       <View style={styles.controlsContainer}>
-        <TouchableOpacity style={styles.controlButton} onPress={() => engineRef.current.dispatch({ type: 'move-up' })}>
+        <TouchableOpacity style={styles.controlButton} onPress={() => engineRef.current?.dispatch({ type: 'move-up' })}>
           <Ionicons name="arrow-up-circle" size={60} color="white" />
         </TouchableOpacity>
         <View style={styles.middleControls}>
-          <TouchableOpacity style={styles.controlButton} onPress={() => engineRef.current.dispatch({ type: 'move-left' })}>
+          <TouchableOpacity style={styles.controlButton} onPress={() => engineRef.current?.dispatch({ type: 'move-left' })}>
             <Ionicons name="arrow-back-circle" size={60} color="white" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.controlButton} onPress={() => engineRef.current.dispatch({ type: 'move-right' })}>
+          <TouchableOpacity style={styles.controlButton} onPress={() => engineRef.current?.dispatch({ type: 'move-right' })}>
             <Ionicons name="arrow-forward-circle" size={60} color="white" />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.controlButton} onPress={() => engineRef.current.dispatch({ type: 'move-down' })}>
+        <TouchableOpacity style={styles.controlButton} onPress={() => engineRef.current?.dispatch({ type: 'move-down' })}>
           <Ionicons name="arrow-down-circle" size={60} color="white" />
         </TouchableOpacity>
       </View>
@@ -150,3 +159,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
+
+

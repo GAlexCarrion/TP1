@@ -8,13 +8,20 @@ import { GameLoop } from '../engine/systems';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
+// SOLUCIÓN: Creamos una interfaz personalizada que le enseña a TypeScript
+// cómo es el componente GameEngine, incluyendo los métodos .swap y .dispatch.
+interface GameEngineRef extends GameEngine {
+  swap: (entities: any) => void;
+  dispatch: (event: any) => void;
+}
+
 export default function JuegoScreen() {
   const [isRunning, setIsRunning] = useState(true);
   const [score, setScore] = useState(0);
-  const engineRef = useRef(null);
+  // Usamos nuestra nueva interfaz personalizada con useRef.
+  const engineRef = useRef<GameEngineRef>(null);
 
-  // Función para manejar los eventos del motor del juego
-  const onEvent = (e:any) => {
+  const onEvent = (e: any) => {
     if (e.type === 'eat') {
       setScore(currentScore => currentScore + 10);
     } else if (e.type === 'game-over') {
@@ -23,8 +30,6 @@ export default function JuegoScreen() {
     }
   };
 
-  // Función para guardar la puntuación en Firestore
-  // CORRECCIÓN 1: Se añade el tipo 'number' al parámetro finalScore
   const handleSaveScore = async (finalScore: number) => {
     const auth = getAuth();
     const user = auth.currentUser;
@@ -47,18 +52,18 @@ export default function JuegoScreen() {
     }
   };
 
-  // Función para reiniciar el juego
   const resetGame = () => {
-    // CORRECCIÓN 2: Se comprueba que engineRef.current no sea null
-    if (engineRef.current as any ) {
-        engineRef.current!.swap(entities());
+    // La comprobación 'if (engineRef.current)' ahora funciona porque TypeScript
+    // sabe que el método .swap() existe en nuestra interfaz GameEngineRef.
+    if (engineRef.current) {
+        engineRef.current.swap(entities());
         setIsRunning(true);
         setScore(0);
     }
   };
 
   const handleMove = (direction: string) => {
-    // CORRECCIÓN 2: Se comprueba que engineRef.current no sea null
+    // Lo mismo para .dispatch(). El error desaparece.
     if (engineRef.current) {
         engineRef.current.dispatch({ type: direction });
     }
@@ -86,6 +91,7 @@ export default function JuegoScreen() {
         </View>
       )}
 
+      {/* Controles */}
       <View style={styles.controlsContainer}>
         <TouchableOpacity style={styles.controlButton} onPress={() => handleMove('move-up')}>
           <Ionicons name="arrow-up-circle" size={60} color="white" />
@@ -106,6 +112,7 @@ export default function JuegoScreen() {
   );
 }
 
+// Estilos
 const styles = StyleSheet.create({
   container: {
     flex: 1,

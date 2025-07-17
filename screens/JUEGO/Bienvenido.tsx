@@ -3,6 +3,9 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 
+
+
+
 type GameDrawerParamList = {
   WelcomeGame: undefined;
   Game: undefined;
