@@ -1,168 +1,199 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { GameEngine } from 'react-native-game-engine';
-import { Ionicons } from '@expo/vector-icons';
-import Constants from '../engine/constants';
+import React, { useState, useEffect, useReducer } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Alert } from 'react-native';
 import entities from '../engine/entities';
 import { GameLoop } from '../engine/systems';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import Head from '../engine/Head';
+import Tail from '../engine/Tail';
+import Food from '../engine/Food';
+import { Ionicons } from '@expo/vector-icons';
 
-// SOLUCIÓN: Creamos una interfaz personalizada que le enseña a TypeScript
-// cómo es el componente GameEngine, incluyendo los métodos .swap y .dispatch.
-interface GameEngineRef extends GameEngine {
-  swap: (entities: any) => void;
-  dispatch: (event: any) => void;
+const initialState = {
+  entities: entities(),
+  score: 0,
+  gameOver: false,
+};
+
+import { ref, push } from 'firebase/database';
+import { db, auth } from '../../FIREBASE/Config';
+
+function gameReducer(state: { gameOver: any; entities: { head: any; }; score: number; }, action: { type: any; payload: { touches: any; dispatch: any; events: any; }; }) {
+  switch (action.type) {
+    case 'tick':
+      if (state.gameOver) return state;
+      const newEntities = GameLoop(state.entities, action.payload);
+      return { ...state, entities: newEntities };
+    case 'move-up':
+    case 'move-down':
+    case 'move-left':
+    case 'move-right':
+      if (state.gameOver) return state;
+      return { ...state, entities: { ...state.entities, head: { ...state.entities.head, speed: getSpeedFromAction(action.type) } } };
+    case 'eat':
+      return { ...state, score: state.score + 1 };
+    case 'game-over':
+      if (auth.currentUser) {
+        const scoresRef = ref(db, 'scores');
+        push(scoresRef, {
+          userId: auth.currentUser.uid,
+          username: auth.currentUser.displayName || 'Jugador',
+          score: state.score,
+          createdAt: new Date().toISOString(),
+        }).catch(error => {
+          console.error("Error al guardar la puntuación:", error);
+          Alert.alert("Error", "No se pudo guardar la puntuación.");
+        });
+      }
+      return { ...state, gameOver: true };
+    case 'reset':
+      return initialState;
+    default:
+      return state;
+  }
 }
 
-export default function JuegoScreen() {
-  const [isRunning, setIsRunning] = useState(true);
-  const [score, setScore] = useState(0);
-  // Usamos nuestra nueva interfaz personalizada con useRef.
-  const engineRef = useRef<GameEngineRef>(null);
+function getSpeedFromAction(actionType: any) {
+  switch (actionType) {
+    case 'move-up': return [0, -1];
+    case 'move-down': return [0, 1];
+    case 'move-left': return [-1, 0];
+    case 'move-right': return [1, 0];
+    default: return [1, 0];
+  }
+}
 
-  const onEvent = (e: any) => {
-    if (e.type === 'eat') {
-      setScore(currentScore => currentScore + 10);
-    } else if (e.type === 'game-over') {
-      setIsRunning(false);
-      handleSaveScore(score);
-    }
-  };
+export default function Juego() {
+  const [state, dispatch] = useReducer(gameReducer, initialState);
 
-  const handleSaveScore = async (finalScore: number) => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    if (!user) {
-        Alert.alert("Error", "Debes estar autenticado para guardar tu puntuación.");
-        return;
-    }
-    
-    try {
-        const db = getFirestore();
-        await addDoc(collection(db, "scores"), {
-            userId: user.uid,
-            score: finalScore,
-            createdAt: new Date(),
-        });
-        Alert.alert("Juego Terminado", `Tu puntuación fue: ${finalScore}\n¡Guardada exitosamente!`);
-    } catch (error) {
-        console.error("Error al guardar la puntuación: ", error);
-        Alert.alert("Error", "No se pudo guardar la puntuación.");
-    }
-  };
-
-  const resetGame = () => {
-    // La comprobación 'if (engineRef.current)' ahora funciona porque TypeScript
-    // sabe que el método .swap() existe en nuestra interfaz GameEngineRef.
-    if (engineRef.current) {
-        engineRef.current.swap(entities());
-        setIsRunning(true);
-        setScore(0);
-    }
-  };
+  useEffect(() => {
+    if (state.gameOver) return;
+    const interval = setInterval(() => {
+      dispatch({ type: 'tick', payload: { touches: [], dispatch, events: [] } });
+    }, 100);
+    return () => clearInterval(interval);
+  }, [state.gameOver]);
 
   const handleMove = (direction: string) => {
-    // Lo mismo para .dispatch(). El error desaparece.
-    if (engineRef.current) {
-        engineRef.current.dispatch({ type: direction });
-    }
-  }
+    dispatch({
+      type: direction,
+      payload: {
+        touches: undefined,
+        dispatch: undefined,
+        events: undefined
+      }
+    });
+  };
+
+  const handleReset = () => {
+    dispatch({
+      type: 'reset',
+      payload: {
+        touches: undefined,
+        dispatch: undefined,
+        events: undefined
+      }
+    });
+  };
+
+  const { head, tail, food } = state.entities;
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.scoreText}>Puntuación: {score}</Text>
-      
-      <GameEngine
-        ref={engineRef}
-        style={styles.gameContainer}
-        systems={[GameLoop]}
-        entities={entities()}
-        running={isRunning}
-        onEvent={onEvent}
-      />
+    <SafeAreaView style={styles.container}>
+      <View style={styles.gameArea}>
+        <Head position={head.position} size={head.size} />
+        <Tail elements={tail.elements} size={tail.size} />
+        <Food position={food.position} size={food.size} />
+      </View>
 
-      {!isRunning && (
-        <View style={styles.gameOverOverlay}>
+      <View style={styles.scoreContainer}>
+        <Text style={styles.scoreText}>Puntuación: {state.score}</Text>
+      </View>
+
+      <View style={styles.controls}>
+        <View style={styles.controlRow}>
+          <TouchableOpacity onPress={() => handleMove('move-up')} style={styles.controlButton}>
+            <Ionicons name="arrow-up" size={30} color="#1ABC9C" />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.controlRow}>
+          <TouchableOpacity onPress={() => handleMove('move-left')} style={styles.controlButton}>
+            <Ionicons name="arrow-back" size={30} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleMove('move-down')} style={styles.controlButton}>
+            <Ionicons name="arrow-down" size={30} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleMove('move-right')} style={styles.controlButton}>
+            <Ionicons name="arrow-forward" size={30} color="white" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {state.gameOver && (
+        <View style={styles.gameOverContainer}>
           <Text style={styles.gameOverText}>Juego Terminado</Text>
-          <TouchableOpacity style={styles.resetButton} onPress={resetGame}>
-            <Text style={styles.resetButtonText}>Jugar de Nuevo</Text>
+          <TouchableOpacity onPress={handleReset} style={styles.resetButton}>
+            <Text style={styles.resetButtonText}>Reiniciar</Text>
           </TouchableOpacity>
         </View>
       )}
-
-      {/* Controles */}
-      <View style={styles.controlsContainer}>
-        <TouchableOpacity style={styles.controlButton} onPress={() => handleMove('move-up')}>
-          <Ionicons name="arrow-up-circle" size={60} color="white" />
-        </TouchableOpacity>
-        <View style={styles.middleControls}>
-          <TouchableOpacity style={styles.controlButton} onPress={() => handleMove('move-left')}>
-            <Ionicons name="arrow-back-circle" size={60} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.controlButton} onPress={() => handleMove('move-right')}>
-            <Ionicons name="arrow-forward-circle" size={60} color="white" />
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity style={styles.controlButton} onPress={() => handleMove('move-down')}>
-          <Ionicons name="arrow-down-circle" size={60} color="white" />
-        </TouchableOpacity>
-      </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
-// Estilos
 const styles = StyleSheet.create({
-  container: {
+  container: { flex: 1, backgroundColor: '#2C3E50', justifyContent: 'center' },
+  gameArea: {
     flex: 1,
-    backgroundColor: '#2C3E50',
-    justifyContent: 'center',
+    backgroundColor: '#1A252F',
+    margin: 10,
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  scoreContainer: {
+    padding: 10,
     alignItems: 'center',
   },
   scoreText: {
+    color: '#FFD700',
     fontSize: 24,
     fontWeight: 'bold',
-    color: 'white',
-    position: 'absolute',
-    top: 50,
   },
-  gameContainer: {
-    width: Constants.MAX_WIDTH,
-    height: Constants.MAX_HEIGHT,
-    backgroundColor: '#34495E',
-    position: 'absolute',
-  },
-  controlsContainer: {
-    position: 'absolute',
-    bottom: 30,
-    width: '100%',
+  controls: {
+    padding: 10,
     alignItems: 'center',
   },
-  middleControls: {
+  controlRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '60%',
-  },
-  controlButton: {},
-  gameOverOverlay: {
-    position: 'absolute',
     justifyContent: 'center',
+  },
+  controlButton: {
+    backgroundColor: '#34495E',
+    margin: 10,
+    padding: 15,
+    borderRadius: 50,
+    width: 60,
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    width: '100%',
-    height: '100%',
+  },
+  controlText: {
+    color: 'white',
+    fontSize: 30,
+    fontWeight: 'bold',
+  },
+  gameOverContainer: {
+    position: 'absolute',
+    top: '40%',
+    left: 0,
+    right: 0,
+    alignItems: 'center',
   },
   gameOverText: {
-    fontSize: 48,
+    color: 'red',
+    fontSize: 36,
     fontWeight: 'bold',
-    color: 'white',
+    marginBottom: 20,
   },
   resetButton: {
-    marginTop: 20,
-    backgroundColor: '#2ECC71',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
+    backgroundColor: '#27AE60',
+    padding: 15,
     borderRadius: 10,
   },
   resetButtonText: {

@@ -4,31 +4,31 @@ import Head from './Head';
 import Food from './Food';
 import Tail from './Tail';
 
-// Genera una posición aleatoria para la comida.
 const randomBetween = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 export default function entities() {
-    let engine = null;
     let head = null;
     let food = null;
     let tail = null;
 
-    // Inicializa las entidades del juego
+    const centerX = Math.floor((Constants.MAX_WIDTH / Constants.GRID_SIZE) / 2);
+    const centerY = Math.floor((Constants.MAX_HEIGHT / Constants.GRID_SIZE) / 2);
+
     head = {
-        position: [0, 0],
+        position: [centerX, centerY], 
         size: Constants.GRID_SIZE,
-        speed: [1, 0], // Moviéndose a la derecha inicialmente
-        nextMove: 10,
-        updateFrequency: 10,
+        speed: [1, 0],
+        nextMove: 8,
+        updateFrequency: 8,
         renderer: <Head />
     };
 
     food = {
         position: [
             randomBetween(0, (Constants.MAX_WIDTH / Constants.GRID_SIZE) - 1),
-            randomBetween(0, (Constants.MAX_HEIGHT / Constants.GRID_SIZE) - 5) // -5 para no aparecer bajo los controles
+            randomBetween(0, (Constants.MAX_HEIGHT / Constants.GRID_SIZE) - 10) 
         ],
         size: Constants.GRID_SIZE,
         renderer: <Food />

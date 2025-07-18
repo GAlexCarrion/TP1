@@ -1,18 +1,18 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Image } from 'react-native';
 
-// Componente visual para la comida.
+import appleImage from '../../assets/—Pngtree—apple fruit cartoon apple cartoon_3779367.png';
+
 export default function Food({ position, size }) {
   return (
-    <View
+    <Image
+      source={appleImage}
       style={{
         width: size,
         height: size,
-        backgroundColor: '#E74C3C', // Rojo
         position: 'absolute',
         left: position[0] * size,
         top: position[1] * size,
-        borderRadius: 20, // Círculo
       }}
     />
   );
